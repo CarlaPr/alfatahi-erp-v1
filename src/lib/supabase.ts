@@ -1,0 +1,596 @@
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error('Missing Supabase environment variables');
+}
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+
+export type Database = {
+  public: {
+    Tables: {
+      clients: {
+        Row: {
+          id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          address: string | null;
+          city: string | null;
+          document: string | null;
+          type: 'individual' | 'company';
+          notes: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          type?: 'individual' | 'company';
+          notes?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          type?: 'individual' | 'company';
+          notes?: string | null;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+          user_id?: string;
+        };
+      };
+      suppliers: {
+        Row: {
+          id: string;
+          name: string;
+          email: string | null;
+          phone: string | null;
+          address: string | null;
+          city: string | null;
+          document: string | null;
+          category: string | null;
+          notes: string | null;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          category?: string | null;
+          notes?: string | null;
+          is_active?: boolean;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          email?: string | null;
+          phone?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          category?: string | null;
+          notes?: string | null;
+          is_active?: boolean;
+          user_id?: string;
+        };
+      };
+      work_orders: {
+        Row: {
+          id: string;
+          number: string;
+          client_id: string | null;
+          category_id: string | null;
+          title: string;
+          description: string | null;
+          status: 'budget' | 'approved' | 'in_progress' | 'completed' | 'cancelled' | 'delivered';
+          total_value: number;
+          discount: number;
+          install_address: string | null;
+          install_city: string | null;
+          install_date: string | null;
+          width: number | null;
+          height: number | null;
+          area: number | null;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+          completed_at: string | null;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          number: string;
+          client_id?: string | null;
+          category_id?: string | null;
+          title: string;
+          description?: string | null;
+          status?: 'budget' | 'approved' | 'in_progress' | 'completed' | 'cancelled' | 'delivered';
+          total_value?: number;
+          discount?: number;
+          install_address?: string | null;
+          install_city?: string | null;
+          install_date?: string | null;
+          width?: number | null;
+          height?: number | null;
+          area?: number | null;
+          notes?: string | null;
+          completed_at?: string | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          number?: string;
+          client_id?: string | null;
+          category_id?: string | null;
+          title?: string;
+          description?: string | null;
+          status?: 'budget' | 'approved' | 'in_progress' | 'completed' | 'cancelled' | 'delivered';
+          total_value?: number;
+          discount?: number;
+          install_address?: string | null;
+          install_city?: string | null;
+          install_date?: string | null;
+          width?: number | null;
+          height?: number | null;
+          area?: number | null;
+          notes?: string | null;
+          completed_at?: string | null;
+          user_id?: string;
+        };
+      };
+      work_order_items: {
+        Row: {
+          id: string;
+          work_order_id: string;
+          description: string;
+          category: string | null;
+          quantity: number;
+          unit: string;
+          unit_cost: number;
+          unit_price: number;
+          total_cost: number;
+          total_price: number;
+          notes: string | null;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          work_order_id: string;
+          description: string;
+          category?: string | null;
+          quantity?: number;
+          unit?: string;
+          unit_cost?: number;
+          unit_price?: number;
+          notes?: string | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          work_order_id?: string;
+          description?: string;
+          category?: string | null;
+          quantity?: number;
+          unit?: string;
+          unit_cost?: number;
+          unit_price?: number;
+          notes?: string | null;
+          user_id?: string;
+        };
+      };
+      work_order_costs: {
+        Row: {
+          id: string;
+          work_order_id: string;
+          description: string;
+          category: 'labor' | 'fuel' | 'transport' | 'installation' | 'equipment' | 'other';
+          amount: number;
+          notes: string | null;
+          date: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          work_order_id: string;
+          description: string;
+          category?: 'labor' | 'fuel' | 'transport' | 'installation' | 'equipment' | 'other';
+          amount?: number;
+          notes?: string | null;
+          date?: string;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          work_order_id?: string;
+          description?: string;
+          category?: 'labor' | 'fuel' | 'transport' | 'installation' | 'equipment' | 'other';
+          amount?: number;
+          notes?: string | null;
+          date?: string;
+          user_id?: string;
+        };
+      };
+      accounts_payable: {
+        Row: {
+          id: string;
+          supplier_id: string | null;
+          work_order_id: string | null;
+          description: string;
+          category: 'variable' | 'fixed' | 'provision';
+          subcategory: string | null;
+          total_amount: number;
+          paid_amount: number;
+          due_date: string;
+          payment_date: string | null;
+          status: 'pending' | 'partial' | 'paid' | 'overdue' | 'cancelled';
+          payment_method: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | 'check' | null;
+          document_number: string | null;
+          installment_number: number | null;
+          total_installments: number | null;
+          notes: string | null;
+          is_recurring: boolean;
+          recurrence_frequency: 'monthly' | 'weekly' | 'yearly' | null;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          supplier_id?: string | null;
+          work_order_id?: string | null;
+          description: string;
+          category: 'variable' | 'fixed' | 'provision';
+          subcategory?: string | null;
+          total_amount: number;
+          paid_amount?: number;
+          due_date: string;
+          payment_date?: string | null;
+          status?: 'pending' | 'partial' | 'paid' | 'overdue' | 'cancelled';
+          payment_method?: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | 'check' | null;
+          document_number?: string | null;
+          installment_number?: number | null;
+          total_installments?: number | null;
+          notes?: string | null;
+          is_recurring?: boolean;
+          recurrence_frequency?: 'monthly' | 'weekly' | 'yearly' | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          supplier_id?: string | null;
+          work_order_id?: string | null;
+          description?: string;
+          category?: 'variable' | 'fixed' | 'provision';
+          subcategory?: string | null;
+          total_amount?: number;
+          paid_amount?: number;
+          due_date?: string;
+          payment_date?: string | null;
+          status?: 'pending' | 'partial' | 'paid' | 'overdue' | 'cancelled';
+          payment_method?: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | 'check' | null;
+          document_number?: string | null;
+          installment_number?: number | null;
+          total_installments?: number | null;
+          notes?: string | null;
+          is_recurring?: boolean;
+          recurrence_frequency?: 'monthly' | 'weekly' | 'yearly' | null;
+          user_id?: string;
+        };
+      };
+      accounts_receivable: {
+        Row: {
+          id: string;
+          client_id: string | null;
+          work_order_id: string | null;
+          description: string;
+          total_amount: number;
+          received_amount: number;
+          due_date: string;
+          expected_date: string | null;
+          receipt_date: string | null;
+          status: 'pending' | 'partial' | 'received' | 'overdue' | 'cancelled';
+          payment_method: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | null;
+          document_number: string | null;
+          installment_number: number | null;
+          total_installments: number | null;
+          card_fee_percent: number;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          client_id?: string | null;
+          work_order_id?: string | null;
+          description: string;
+          total_amount: number;
+          received_amount?: number;
+          due_date: string;
+          expected_date?: string | null;
+          receipt_date?: string | null;
+          status?: 'pending' | 'partial' | 'received' | 'overdue' | 'cancelled';
+          payment_method?: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | null;
+          document_number?: string | null;
+          installment_number?: number | null;
+          total_installments?: number | null;
+          card_fee_percent?: number;
+          notes?: string | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          client_id?: string | null;
+          work_order_id?: string | null;
+          description?: string;
+          total_amount?: number;
+          received_amount?: number;
+          due_date?: string;
+          expected_date?: string | null;
+          receipt_date?: string | null;
+          status?: 'pending' | 'partial' | 'received' | 'overdue' | 'cancelled';
+          payment_method?: 'cash' | 'pix' | 'debit' | 'credit' | 'transfer' | 'boleto' | null;
+          document_number?: string | null;
+          installment_number?: number | null;
+          total_installments?: number | null;
+          card_fee_percent?: number;
+          notes?: string | null;
+          user_id?: string;
+        };
+      };
+      losses: {
+        Row: {
+          id: string;
+          work_order_id: string | null;
+          description: string;
+          category: 'broken' | 'cut_error' | 'transport' | 'rework' | 'theft' | 'other';
+          material: string | null;
+          quantity: number | null;
+          unit: string;
+          unit_cost: number;
+          total_loss: number;
+          cause: string | null;
+          responsible: string | null;
+          notes: string | null;
+          date: string;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          work_order_id?: string | null;
+          description: string;
+          category: 'broken' | 'cut_error' | 'transport' | 'rework' | 'theft' | 'other';
+          material?: string | null;
+          quantity?: number | null;
+          unit?: string;
+          unit_cost?: number;
+          cause?: string | null;
+          responsible?: string | null;
+          notes?: string | null;
+          date?: string;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          work_order_id?: string | null;
+          description?: string;
+          category?: 'broken' | 'cut_error' | 'transport' | 'rework' | 'theft' | 'other';
+          material?: string | null;
+          quantity?: number | null;
+          unit?: string;
+          unit_cost?: number;
+          cause?: string | null;
+          responsible?: string | null;
+          notes?: string | null;
+          date?: string;
+          user_id?: string;
+        };
+      };
+      bank_accounts: {
+        Row: {
+          id: string;
+          name: string;
+          bank_name: string | null;
+          agency: string | null;
+          account_number: string | null;
+          type: 'checking' | 'savings' | 'cash' | 'investment' | null;
+          initial_balance: number;
+          current_balance: number;
+          is_active: boolean;
+          notes: string | null;
+          created_at: string;
+          updated_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          bank_name?: string | null;
+          agency?: string | null;
+          account_number?: string | null;
+          type?: 'checking' | 'savings' | 'cash' | 'investment' | null;
+          initial_balance?: number;
+          current_balance?: number;
+          is_active?: boolean;
+          notes?: string | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          bank_name?: string | null;
+          agency?: string | null;
+          account_number?: string | null;
+          type?: 'checking' | 'savings' | 'cash' | 'investment' | null;
+          initial_balance?: number;
+          current_balance?: number;
+          is_active?: boolean;
+          notes?: string | null;
+          user_id?: string;
+        };
+      };
+      cash_transactions: {
+        Row: {
+          id: string;
+          bank_account_id: string | null;
+          type: 'income' | 'expense' | 'transfer';
+          category: string | null;
+          subcategory: string | null;
+          description: string;
+          amount: number;
+          date: string;
+          reference_date: string | null;
+          account_payable_id: string | null;
+          account_receivable_id: string | null;
+          work_order_id: string | null;
+          document_number: string | null;
+          notes: string | null;
+          is_reconciled: boolean;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          bank_account_id?: string | null;
+          type: 'income' | 'expense' | 'transfer';
+          category?: string | null;
+          subcategory?: string | null;
+          description: string;
+          amount: number;
+          date: string;
+          reference_date?: string | null;
+          account_payable_id?: string | null;
+          account_receivable_id?: string | null;
+          work_order_id?: string | null;
+          document_number?: string | null;
+          notes?: string | null;
+          is_reconciled?: boolean;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          bank_account_id?: string | null;
+          type?: 'income' | 'expense' | 'transfer';
+          category?: string | null;
+          subcategory?: string | null;
+          description?: string;
+          amount?: number;
+          date?: string;
+          reference_date?: string | null;
+          account_payable_id?: string | null;
+          account_receivable_id?: string | null;
+          work_order_id?: string | null;
+          document_number?: string | null;
+          notes?: string | null;
+          is_reconciled?: boolean;
+          user_id?: string;
+        };
+      };
+      service_categories: {
+        Row: {
+          id: string;
+          name: string;
+          description: string | null;
+          created_at: string;
+          user_id: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          description?: string | null;
+          user_id: string;
+        };
+        Update: {
+          id?: string;
+          name?: string;
+          description?: string | null;
+          user_id?: string;
+        };
+      };
+      profiles: {
+        Row: {
+          id: string;
+          company_name: string | null;
+          owner_name: string | null;
+          phone: string | null;
+          email: string | null;
+          address: string | null;
+          city: string | null;
+          document: string | null;
+          logo_url: string | null;
+          settings: Record<string, unknown>;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id: string;
+          company_name?: string | null;
+          owner_name?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          logo_url?: string | null;
+          settings?: Record<string, unknown>;
+        };
+        Update: {
+          id?: string;
+          company_name?: string | null;
+          owner_name?: string | null;
+          phone?: string | null;
+          email?: string | null;
+          address?: string | null;
+          city?: string | null;
+          document?: string | null;
+          logo_url?: string | null;
+          settings?: Record<string, unknown>;
+        };
+      };
+    };
+  };
+};
+
+export type Client = Database['public']['Tables']['clients']['Row'];
+export type Supplier = Database['public']['Tables']['suppliers']['Row'];
+export type WorkOrder = Database['public']['Tables']['work_orders']['Row'];
+export type WorkOrderItem = Database['public']['Tables']['work_order_items']['Row'];
+export type WorkOrderCost = Database['public']['Tables']['work_order_costs']['Row'];
+export type AccountPayable = Database['public']['Tables']['accounts_payable']['Row'];
+export type AccountReceivable = Database['public']['Tables']['accounts_receivable']['Row'];
+export type Loss = Database['public']['Tables']['losses']['Row'];
+export type BankAccount = Database['public']['Tables']['bank_accounts']['Row'];
+export type CashTransaction = Database['public']['Tables']['cash_transactions']['Row'];
+export type ServiceCategory = Database['public']['Tables']['service_categories']['Row'];
+export type Profile = Database['public']['Tables']['profiles']['Row'];
