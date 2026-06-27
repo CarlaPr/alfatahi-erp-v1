@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import { useAuth } from '../contexts/AuthContext';
-import { Building2, Mail, Lock, Loader2 } from 'lucide-react';
+import { useAuth, UserRole } from '../contexts/AuthContext';
+import { Building2, Mail, Lock, Loader2, User, Briefcase } from 'lucide-react';
 
 export function AuthPage() {
   const [isLogin, setIsLogin] = useState(true);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [companyName, setCompanyName] = useState('');
+  const [role, setRole] = useState<UserRole>('gestao');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { signIn, signUp } = useAuth();
@@ -24,7 +25,7 @@ export function AuthPage() {
         if (!companyName.trim()) {
           throw new Error('Nome da empresa é obrigatório');
         }
-        const { error } = await signUp(email, password, companyName);
+        const { error } = await signUp(email, password, companyName, role);
         if (error) throw error;
       }
     } catch (err) {
@@ -52,22 +53,58 @@ export function AuthPage() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label className="block text-sm font-medium text-slate-300 mb-2">
-                  Nome da Empresa
-                </label>
-                <div className="relative">
-                  <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                  <input
-                    type="text"
-                    value={companyName}
-                    onChange={(e) => setCompanyName(e.target.value)}
-                    className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
-                    placeholder="Sua empresa"
-                    required={!isLogin}
-                  />
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Nome da Empresa
+                  </label>
+                  <div className="relative">
+                    <Building2 className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                    <input
+                      type="text"
+                      value={companyName}
+                      onChange={(e) => setCompanyName(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-600 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+                      placeholder="Sua empresa"
+                      required={!isLogin}
+                    />
+                  </div>
                 </div>
-              </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-slate-300 mb-2">
+                    Tipo de Perfil
+                  </label>
+                  <div className="grid grid-cols-2 gap-3">
+                    <button
+                      type="button"
+                      onClick={() => setRole('gestao')}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
+                        role === 'gestao'
+                          ? 'bg-cyan-500/20 border-cyan-500/50 text-cyan-400'
+                          : 'bg-slate-900/50 border-slate-600 text-slate-400 hover:border-slate-500'
+                      }`}
+                    >
+                      <Briefcase className="w-6 h-6" />
+                      <span className="font-medium">GESTÃO</span>
+                      <span className="text-xs text-center">Acesso completo a todos os módulos</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setRole('vendas')}
+                      className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition-all ${
+                        role === 'vendas'
+                          ? 'bg-amber-500/20 border-amber-500/50 text-amber-400'
+                          : 'bg-slate-900/50 border-slate-600 text-slate-400 hover:border-slate-500'
+                      }`}
+                    >
+                      <User className="w-6 h-6" />
+                      <span className="font-medium">VENDAS</span>
+                      <span className="text-xs text-center">Dashboard Comercial, Clientes, Orçamentos</span>
+                    </button>
+                  </div>
+                </div>
+              </>
             )}
 
             <div>
