@@ -2,16 +2,46 @@ import { createContext, useContext, useEffect, useState, ReactNode } from 'react
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import { supabase, Profile } from '../lib/supabase';
 
+export type UserRole = 'gestao' | 'vendas';
+
 interface AuthContextType {
   user: User | null;
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
+  role: UserRole;
+  isGestao: boolean;
+  isVendas: boolean;
+  canAccess: (module: string) => boolean;
   signIn: (email: string, password: string) => Promise<{ error: AuthError | null }>;
-  signUp: (email: string, password: string, companyName: string) => Promise<{ error: AuthError | null }>;
+  signUp: (email: string, password: string, companyName: string, role?: UserRole) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
   updateProfile: (data: Partial<Profile>) => Promise<void>;
 }
+
+// Definição de permissões por perfil
+const PERMISSIONS: Record<UserRole, string[]> = {
+  gestao: [
+    'dashboard',
+    'work-orders',
+    'clients',
+    'suppliers',
+    'accounts-payable',
+    'accounts-receivable',
+    'cash-flow',
+    'losses',
+    'dre',
+    'bank-accounts',
+    'settings',
+    'quotes',
+  ],
+  vendas: [
+    'dashboard-comercial',
+    'clients',
+    'quotes',
+    'accounts-receivable',
+  ],
+};
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -20,6 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  const role: UserRole = profile?.role || 'gestao';
+  const isGestao = role === 'gestao';
+  const isVendas = role === 'vendas';
+
+  const canAccess = (module: string): boolean => {
+    return PERMISSIONS[role].includes(module);
+  };
 
   useEffect(() => {
     let mounted = true;
@@ -79,7 +117,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  const signUp = async (email: string, password: string, companyName: string) => {
+  const signUp = async (email: string, password: string, companyName: string, userRole: UserRole = 'gestao') => {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -94,6 +132,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await supabase.from('profiles').insert({
         id: data.user.id,
         company_name: companyName,
+        role: userRole,
       });
     }
 
@@ -134,6 +173,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       session,
       profile,
       loading,
+      role,
+      isGestao,
+      isVendas,
+      canAccess,
       signIn,
       signUp,
       signOut,

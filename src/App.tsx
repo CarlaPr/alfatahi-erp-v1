@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { AuthPage } from './components/Auth';
 import { Layout } from './components/Layout';
 import { Dashboard } from './pages/Dashboard';
+import { DashboardComercial } from './pages/DashboardComercial';
 import { Clients } from './pages/Clients';
 import { Suppliers } from './pages/Suppliers';
 import { WorkOrders } from './pages/WorkOrders';
@@ -13,11 +14,18 @@ import { DRE } from './pages/DRE';
 import { Losses } from './pages/Losses';
 import { BankAccounts } from './pages/BankAccounts';
 import { Settings } from './pages/Settings';
+import { Quotes } from './pages/Quotes';
 import { Loader2 } from 'lucide-react';
 
 function AppContent() {
-  const { user, loading } = useAuth();
-  const [currentPage, setCurrentPage] = useState('dashboard');
+  const { user, loading, isGestao } = useAuth();
+  const [currentPage, setCurrentPage] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (user && !currentPage) {
+      setCurrentPage(isGestao ? 'dashboard' : 'dashboard-comercial');
+    }
+  }, [user, currentPage, isGestao]);
 
   if (loading) {
     return (
@@ -31,16 +39,28 @@ function AppContent() {
     return <AuthPage />;
   }
 
+  if (!currentPage) {
+    return (
+      <div className="min-h-screen bg-slate-900 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-cyan-400 animate-spin" />
+      </div>
+    );
+  }
+
   const renderPage = () => {
     switch (currentPage) {
       case 'dashboard':
         return <Dashboard />;
+      case 'dashboard-comercial':
+        return <DashboardComercial onPageChange={setCurrentPage} />;
       case 'clients':
         return <Clients />;
       case 'suppliers':
         return <Suppliers />;
       case 'work-orders':
-        return <WorkOrders />;
+        return <WorkOrders onPageChange={setCurrentPage} />;
+      case 'quotes':
+        return <Quotes onPageChange={setCurrentPage} />;
       case 'accounts-payable':
         return <AccountsPayable />;
       case 'accounts-receivable':
@@ -56,7 +76,7 @@ function AppContent() {
       case 'settings':
         return <Settings />;
       default:
-        return <Dashboard />;
+        return isGestao ? <Dashboard /> : <DashboardComercial onPageChange={setCurrentPage} />;
     }
   };
 

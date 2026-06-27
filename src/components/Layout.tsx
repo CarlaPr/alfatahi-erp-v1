@@ -16,6 +16,7 @@ import {
   Building2,
   ChevronRight,
   Settings,
+  FileText,
 } from 'lucide-react';
 
 interface LayoutProps {
@@ -24,22 +25,26 @@ interface LayoutProps {
   onPageChange: (page: string) => void;
 }
 
-const menuItems = [
-  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-  { id: 'work-orders', label: 'Ordens de Serviço', icon: ClipboardList },
-  { id: 'clients', label: 'Clientes', icon: Users },
-  { id: 'suppliers', label: 'Fornecedores', icon: Truck },
-  { id: 'accounts-payable', label: 'Contas a Pagar', icon: CreditCard },
-  { id: 'accounts-receivable', label: 'Contas a Receber', icon: Wallet },
-  { id: 'cash-flow', label: 'Fluxo de Caixa', icon: Banknote },
-  { id: 'losses', label: 'Perdas/Desperdício', icon: TrendingDown },
-  { id: 'dre', label: 'DRE', icon: BarChart3 },
-  { id: 'bank-accounts', label: 'Contas Bancárias', icon: PiggyBank },
+const allMenuItems = [
+  { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard, module: 'dashboard' },
+  { id: 'dashboard-comercial', label: 'Dashboard Comercial', icon: TrendingDown, module: 'dashboard-comercial' },
+  { id: 'work-orders', label: 'Ordens de Serviço', icon: ClipboardList, module: 'work-orders' },
+  { id: 'clients', label: 'Clientes', icon: Users, module: 'clients' },
+  { id: 'suppliers', label: 'Fornecedores', icon: Truck, module: 'suppliers' },
+  { id: 'quotes', label: 'Orçamentos', icon: FileText, module: 'quotes' },
+  { id: 'accounts-payable', label: 'Contas a Pagar', icon: CreditCard, module: 'accounts-payable' },
+  { id: 'accounts-receivable', label: 'Contas a Receber', icon: Wallet, module: 'accounts-receivable' },
+  { id: 'cash-flow', label: 'Fluxo de Caixa', icon: Banknote, module: 'cash-flow' },
+  { id: 'losses', label: 'Perdas/Desperdício', icon: TrendingDown, module: 'losses' },
+  { id: 'dre', label: 'DRE', icon: BarChart3, module: 'dre' },
+  { id: 'bank-accounts', label: 'Contas Bancárias', icon: PiggyBank, module: 'bank-accounts' },
 ];
 
 export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, canAccess } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const menuItems = allMenuItems.filter(item => canAccess(item.module));
 
   const handleNavClick = (pageId: string) => {
     onPageChange(pageId);
@@ -112,9 +117,18 @@ export function Layout({ children, currentPage, onPageChange }: LayoutProps) {
                 <p className="text-sm font-medium text-white truncate">
                   {profile?.company_name || 'Vidraçaria'}
                 </p>
-                <p className="text-xs text-slate-400 truncate">
-                  {profile?.owner_name || 'Administrador'}
-                </p>
+                <div className="flex items-center gap-2">
+                  <p className="text-xs text-slate-400 truncate">
+                    {profile?.owner_name || 'Administrador'}
+                  </p>
+                  <span className={`text-xs px-2 py-0.5 rounded-full ${
+                    profile?.role === 'gestao'
+                      ? 'bg-cyan-500/20 text-cyan-400'
+                      : 'bg-amber-500/20 text-amber-400'
+                  }`}>
+                    {profile?.role === 'gestao' ? 'GESTÃO' : 'VENDAS'}
+                  </span>
+                </div>
               </div>
             </div>
 

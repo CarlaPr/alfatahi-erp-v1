@@ -15,6 +15,7 @@ import {
   Wrench,
   Loader2,
   Eye,
+  FileText,
 } from 'lucide-react';
 
 interface ClientPartial {
@@ -47,7 +48,11 @@ interface WorkOrderWithDetails extends WorkOrder {
   category_name?: string;
 }
 
-export function WorkOrders() {
+interface WorkOrdersProps {
+  onPageChange?: (page: string) => void;
+}
+
+export function WorkOrders({ onPageChange }: WorkOrdersProps) {
   const { user } = useAuth();
   const [workOrders, setWorkOrders] = useState<WorkOrderWithDetails[]>([]);
   const [clients, setClients] = useState<ClientPartial[]>([]);
@@ -1099,6 +1104,20 @@ export function WorkOrders() {
                     {statusConfig[selectedWorkOrder.status].label}
                   </span>
                 </div>
+                {selectedWorkOrder.quote_id && (
+                  <div className="col-span-2">
+                    <button
+                      onClick={() => {
+                        setShowDetailsModal(false);
+                        onPageChange?.('quotes');
+                      }}
+                      className="w-full px-4 py-3 bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-500/30 text-cyan-400 rounded-xl flex items-center justify-center gap-2 hover:border-cyan-500/50 transition-colors"
+                    >
+                      <FileText className="w-4 h-4" />
+                      Ver Orçamento Original
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Materials */}
